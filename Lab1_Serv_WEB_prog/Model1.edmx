@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Хранилище SBManagingModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="IdBook" />
+          </Key>
+          <Property Name="IdBook" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nchar" MaxLength="25" Nullable="false" />
+          <Property Name="pages" Type="int" />
+          <Property Name="photo" Type="image" />
+        </EntityType>
+        <EntityType Name="Sage">
+          <Key>
+            <PropertyRef Name="IdSage" />
+          </Key>
+          <Property Name="IdSage" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nchar" MaxLength="25" Nullable="false" />
+          <Property Name="age" Type="int" />
+          <Property Name="photo" Type="image" />
+        </EntityType>
+        <EntityType Name="SageBook">
+          <Key>
+            <PropertyRef Name="IdSageBook" />
+          </Key>
+          <Property Name="IdSageBook" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdBook" Type="int" Nullable="false" />
+          <Property Name="IdSage" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_SageBook_ToBook">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="SageBook" Type="Self.SageBook" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="IdBook" />
+            </Principal>
+            <Dependent Role="SageBook">
+              <PropertyRef Name="IdBook" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SageBook_ToSage">
+          <End Role="Sage" Type="Self.Sage" Multiplicity="1" />
+          <End Role="SageBook" Type="Self.SageBook" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sage">
+              <PropertyRef Name="IdSage" />
+            </Principal>
+            <Dependent Role="SageBook">
+              <PropertyRef Name="IdSage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Хранилище SBManagingModelContainer">
+          <EntitySet Name="Book" EntityType="Self.Book" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sage" EntityType="Self.Sage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SageBook" EntityType="Self.SageBook" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_SageBook_ToBook" Association="Self.FK_SageBook_ToBook">
+            <End Role="Book" EntitySet="Book" />
+            <End Role="SageBook" EntitySet="SageBook" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SageBook_ToSage" Association="Self.FK_SageBook_ToSage">
+            <End Role="Sage" EntitySet="Sage" />
+            <End Role="SageBook" EntitySet="SageBook" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SBManagingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Book">
+          <Key>
+            <PropertyRef Name="IdBook" />
+          </Key>
+          <Property Name="IdBook" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="pages" Type="Int32" />
+          <Property Name="photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="SageBooks" Relationship="Self.FK_SageBook_ToBook" FromRole="Book" ToRole="SageBook" />
+        </EntityType>
+        <EntityType Name="Sage">
+          <Key>
+            <PropertyRef Name="IdSage" />
+          </Key>
+          <Property Name="IdSage" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="age" Type="Int32" />
+          <Property Name="photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="SageBooks" Relationship="Self.FK_SageBook_ToSage" FromRole="Sage" ToRole="SageBook" />
+        </EntityType>
+        <EntityType Name="SageBook">
+          <Key>
+            <PropertyRef Name="IdSageBook" />
+          </Key>
+          <Property Name="IdSageBook" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdBook" Type="Int32" Nullable="false" />
+          <Property Name="IdSage" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Book" Relationship="Self.FK_SageBook_ToBook" FromRole="SageBook" ToRole="Book" />
+          <NavigationProperty Name="Sage" Relationship="Self.FK_SageBook_ToSage" FromRole="SageBook" ToRole="Sage" />
+        </EntityType>
+        <Association Name="FK_SageBook_ToBook">
+          <End Role="Book" Type="Self.Book" Multiplicity="1" />
+          <End Role="SageBook" Type="Self.SageBook" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Book">
+              <PropertyRef Name="IdBook" />
+            </Principal>
+            <Dependent Role="SageBook">
+              <PropertyRef Name="IdBook" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SageBook_ToSage">
+          <End Role="Sage" Type="Self.Sage" Multiplicity="1" />
+          <End Role="SageBook" Type="Self.SageBook" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sage">
+              <PropertyRef Name="IdSage" />
+            </Principal>
+            <Dependent Role="SageBook">
+              <PropertyRef Name="IdSage" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SBManagingEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Books" EntityType="Self.Book" />
+          <EntitySet Name="Sages" EntityType="Self.Sage" />
+          <EntitySet Name="SageBooks" EntityType="Self.SageBook" />
+          <AssociationSet Name="FK_SageBook_ToBook" Association="Self.FK_SageBook_ToBook">
+            <End Role="Book" EntitySet="Books" />
+            <End Role="SageBook" EntitySet="SageBooks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SageBook_ToSage" Association="Self.FK_SageBook_ToSage">
+            <End Role="Sage" EntitySet="Sages" />
+            <End Role="SageBook" EntitySet="SageBooks" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище SBManagingModelContainer" CdmEntityContainer="SBManagingEntities">
+          <EntitySetMapping Name="Books">
+            <EntityTypeMapping TypeName="SBManagingModel.Book">
+              <MappingFragment StoreEntitySet="Book">
+                <ScalarProperty Name="IdBook" ColumnName="IdBook" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="pages" ColumnName="pages" />
+                <ScalarProperty Name="photo" ColumnName="photo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sages">
+            <EntityTypeMapping TypeName="SBManagingModel.Sage">
+              <MappingFragment StoreEntitySet="Sage">
+                <ScalarProperty Name="IdSage" ColumnName="IdSage" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="age" ColumnName="age" />
+                <ScalarProperty Name="photo" ColumnName="photo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SageBooks">
+            <EntityTypeMapping TypeName="SBManagingModel.SageBook">
+              <MappingFragment StoreEntitySet="SageBook">
+                <ScalarProperty Name="IdSageBook" ColumnName="IdSageBook" />
+                <ScalarProperty Name="IdBook" ColumnName="IdBook" />
+                <ScalarProperty Name="IdSage" ColumnName="IdSage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
