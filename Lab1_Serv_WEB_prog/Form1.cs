@@ -19,50 +19,32 @@ namespace Lab1_Serv_WEB_prog
 
         public Form1()
         {
-            //var q = select name from sb.Books 
             InitializeComponent();
             SBManagingEntities db = new SBManagingEntities();
-            
-            //Selected = 1;
-            /*штt a = sb.Books.First();*/
-            //Console.Write(a);
-            int a = 2;
-            int[] arr = new int[a];
-            for (int i = 0; i < a; i++)
-            {
-                arr[i] = 1;
-            }
-            comboBox1.Items.Add(arr);
-            comboBox2.SelectedIndex = 1;
-            Sage sage = new Sage();
-            sage.age = 24;
-            sage.name = "asd";
-            db.Sages.Add(sage);
-            Book book = new Book();
-            book.name = "Sobaka Pavlova";
-            book.pages = 100;
-            db.Books.Add(book);
-            //SqlCommand sc = new SqlCommand("Insert into"+ db.Books+" values (1,'Sobaka' , 100)");
-            //object o = sc.ExecuteNonQuery();
-            //var select = from books in db.Books
-            //             select new { id = books.IdBook, name = books.name, pages = books.pages };
-            //dataGridView1.DataSource = select.ToList();
-
+            initData();
         }
-
+        public void initData() {
+            sc.Open();
+            SqlCommand cmd = sc.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select dbo.Book.name, dbo.Book.pages, dbo.Book.IdBook, dbo.Sage.name as SageName, dbo.Sage.IdSage d from dbo.Book full join dbo.SageBook on dbo.Book.IdBook = dbo.SageBook.IdBook  full join dbo.Sage on dbo.Sage.IdSage = dbo.SageBook.IdSage";
+            cmd.ExecuteNonQuery();
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            dataGridView1.DataSource = dt;
+            sc.Close();
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
-
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         public void rBS(string str)
@@ -72,53 +54,66 @@ namespace Lab1_Serv_WEB_prog
             radioButtonAuthor.Text = str + "author for exact book";
             radioButtonAuthor.Visible = true;
             radioButton3.Text = str + "both author and book";
-
             Sage sage = new Sage();
             sage.age = 24;
             sage.name = "asd";
             sb.Sages.Add(sage);
-            // sb.SaveChanges();
-
-            //   radioButton3.Visible = true;
-
+        }
+        public void ShowAuthors() {
+            label3.Visible = false; textBox3.Visible = false;
+            label4.Visible = false; textBox4.Visible = false;
+            label5.Visible = false; textBox2.Visible = false;
+            sc.Open();
+            SqlCommand cmd1 = sc.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "select name, IdSage from Sage";
+            cmd1.ExecuteNonQuery();
+            DataTable dt1 = new DataTable();
+            SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
+            da1.Fill(dt1);
+            comboBox1.ValueMember = "IdSage";
+            comboBox1.DisplayMember = "name";
+            comboBox1.DataSource = dt1;
+            comboBox1.Visible = true;
+            comboBoxBooks.Visible = false;
+            sc.Close();
+        }
+        public void ShowBook() {
+            label3.Visible = false; textBox3.Visible = false;
+            label4.Visible = false; textBox4.Visible = false;
+            label5.Visible = false; textBox2.Visible = false;
+            sc.Open();
+            SqlCommand cmd1 = sc.CreateCommand();
+            cmd1.CommandType = CommandType.Text;
+            cmd1.CommandText = "select name, IdBook from Book";
+            cmd1.ExecuteNonQuery();
+            DataTable dt1 = new DataTable();
+            SqlDataAdapter da1 = new SqlDataAdapter(cmd1);
+            da1.Fill(dt1);
+            comboBoxBooks.ValueMember = "IdBook";
+            comboBoxBooks.DisplayMember = "name";
+            comboBoxBooks.DataSource = dt1;
+            sc.Close();
         }
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox2.SelectedIndex == 0)
             {
                 rBS("Create ");
-                sc.Open();
-                SqlCommand cmd = sc.CreateCommand();
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "insert into Book (pages, name, photo) values ( '" + textBox2.Text+"','" + textBox3.Text + "','" + textBox4.Text+ "')";
-                cmd.ExecuteNonQuery();
-                //textBox2
-                sc.Close();
-                MessageBox.Show("soth happened");
+                textBox2.Visible = true;
+                textBox3.Visible = true;
+                textBox4.Visible = true;
             }
             if (comboBox2.SelectedIndex == 1)
             {
                 rBS("Show ");
-                sc.Open();
-                SqlCommand cmd = sc.CreateCommand();
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "select * from dbo.Book ";
-                    cmd.ExecuteNonQuery();
-                DataTable dt = new DataTable();
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                da.Fill(dt);
-                dataGridView1.DataSource = dt;
-                //dataGridView1.DataSource = KC
-                //textBox2
-                sc.Close();
-                MessageBox.Show("soth happened"); sc.Open();
-                SqlCommand cmd1 = sc.CreateCommand();
-                cmd1.CommandType = CommandType.Text;
-                cmd1.CommandText = "select name from Book";
-                cmd1.ExecuteNonQuery();
-                comboBoxBooks.
-                //textBox2
-                sc.Close();
+                if (radioButtonBook.Checked)
+                {
+                    ShowAuthors();
+                }
+                else if (radioButtonAuthor.Checked) {
+                    ShowBook();
+                }
             }
             if (comboBox2.SelectedIndex == 2)
             {
@@ -132,6 +127,7 @@ namespace Lab1_Serv_WEB_prog
 
         private void radioButtonBook_CheckedChanged(object sender, EventArgs e)
         {
+            ShowAuthors();
             if (radioButtonBook.Checked == true)
             {
                 comboBox1.Visible = true;
@@ -139,13 +135,14 @@ namespace Lab1_Serv_WEB_prog
             }
             else
             {
-                comboBox1.Visible = false;
-                label1.Visible = false;
+                //comboBox1.Visible = false;
+                //label1.Visible = false;
             }
         }
 
         private void radioButtonAuthor_CheckedChanged(object sender, EventArgs e)
         {
+            ShowBook();
             if (radioButtonAuthor.Checked == true)
             {
                 comboBoxBooks.Visible = true;
@@ -153,8 +150,78 @@ namespace Lab1_Serv_WEB_prog
             }
             else
             {
-                comboBoxBooks.Visible = false;
-                label2.Visible = false;
+                //comboBoxBooks.Visible = false;
+                //label2.Visible = false;
+            }
+        }
+
+        private void comboBoxBooks_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataRowView view = comboBoxBooks.SelectedItem as DataRowView;
+            int id = Convert.ToInt32(view["IdBook"]);
+            MessageBox.Show(id.ToString());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (comboBox2.SelectedIndex == 0)
+            {
+                sc.Open();
+                SqlCommand cmd = sc.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "insert into Book (pages, name, photo) values ( '" + textBox2.Text + "','" + textBox3.Text + "','" + textBox4.Text + "')";
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = "insert into SageBook IdSage =1 , IdBook = 10";
+                sc.Close();
+                MessageBox.Show("value added");
+            }
+            else if (comboBox2.SelectedIndex == 2)
+            {
+                textBox2.Visible = true;label5.Visible = true;
+                textBox3.Visible = true;label4.Visible = true;
+                textBox4.Visible = true;label3.Visible = true;
+                DataRowView view = comboBoxBooks.SelectedItem as DataRowView;
+                int id = Convert.ToInt32(view["IdBook"]);
+                MessageBox.Show(id.ToString());
+                sc.Open();
+                SqlCommand cmdp = sc.CreateCommand();
+                cmdp.CommandType = CommandType.Text;
+                cmdp.CommandText = "select pages from  Book where IdBook = "+ id.ToString();
+                cmdp.ExecuteNonQuery();
+                SqlDataAdapter da1 = new SqlDataAdapter(cmdp);
+                textBox2.Text = da1.ToString();
+                SqlCommand cmd = sc.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "update Book set ";
+                if (textBox2.Text != null) {
+                    cmd.CommandText += " pages= '" + textBox2.Text.ToString();
+                }
+                if (textBox3.Text != null) {
+                    cmd.CommandText += "' , name = '" + textBox3.Text.ToString() + "' ";
+                }
+                if (textBox4.Text != null) {
+                    cmd.CommandText += ", photo = '" + textBox4.Text.ToString() + "' ";
+                }
+                cmd.CommandText += " where IdBook = " + id;
+                MessageBox.Show(cmd.CommandText);
+                cmd.ExecuteNonQuery();
+                sc.Close();
+                MessageBox.Show("value updated");
+                initData();
+            }
+            else if (comboBox2.SelectedIndex == 3)
+            {
+                DataRowView view = comboBoxBooks.SelectedItem as DataRowView;
+                int id = Convert.ToInt32(view["IdBook"]);
+                MessageBox.Show(id.ToString());
+                sc.Open();
+                SqlCommand cmd = sc.CreateCommand();
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "Delete from Book where IdBook = " + id;
+                cmd.ExecuteNonQuery();
+                sc.Close();
+                MessageBox.Show("value deleted");
+                initData();
             }
         }
     }
